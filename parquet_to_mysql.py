@@ -1,12 +1,23 @@
 import pyarrow.parquet as pq
 import pandas as pd
 import sys
+from sqlalchemy import create_engine
+import json
+
+with open("config.json") as json_file:
+    hostname = json.load(json_file)["ip"]
+    dbname = json.load(json_file)["dbname"]
+    uname = json.load(json_file)["username"]
+    pwd = json.load(json_file)["password"]
 
 def main():
     if len(sys.argv) != 3:
-        return
+        year = sys.argv[1]
+        month = sys.argv[2]
 
-    trips = pd.read_parquet(f"{sys.argv[1]}_{sys.argv[2]}_taxidata.parquet")
-    trips.to_csv(f"{sys.argv[1]}_{sys.argv[2]}_taxidata.csv")
+    trips = pd.read_parquet(f"{year}_{month}_taxidata.parquet")
+
+    engine = create_engine(f"mysql+pymysql://{uname}:{pwd}@{hostname}/{dbname}")
+    trips.to_sql(con=engine, name=f'{year}_{month}', if_exists='replace')
 
 main()
