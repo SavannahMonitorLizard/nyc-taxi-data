@@ -5,15 +5,21 @@ from sqlalchemy import create_engine
 import json
 
 with open("config.json") as json_file:
-    hostname = json.load(json_file)["ip"]
-    dbname = json.load(json_file)["dbname"]
-    uname = json.load(json_file)["username"]
-    pwd = json.load(json_file)["password"]
+    config = json.load(json_file)
+
+    hostname = config["ip"]
+    dbname = config["dbname"]
+    uname = config["username"]
+    pwd = config["password"]
+
+year = ""
+month = ""
 
 def main():
     if len(sys.argv) != 3:
-        year = sys.argv[1]
-        month = sys.argv[2]
+        return
+    year = sys.argv[1]
+    month = sys.argv[2]
 
     trips = pd.read_parquet(f"{year}_{month}_taxidata.parquet")
 
