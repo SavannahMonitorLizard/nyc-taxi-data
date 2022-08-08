@@ -22,7 +22,7 @@ def main():
     month = sys.argv[2]
 
     if exists(f"{year}_{month}_taxidata.parquet"):
-        trips = pd.read_parquet(f"{year}_{month}_taxidata.parquet")
+        trips = pd.read_parquet(f"{year}_{month}_taxidata.parquet", safe=False)
 
         engine = create_engine(f"mysql+pymysql://{uname}:{pwd}@{hostname}/{dbname}")
         trips.to_sql(con=engine, name=f'{year}_{month}', if_exists='replace')
