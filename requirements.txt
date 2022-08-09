@@ -2,3 +2,4 @@ pyarrow
 pandas
 sqlalchemy
 pymysql
+pyarrow
