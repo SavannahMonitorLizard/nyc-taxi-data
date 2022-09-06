@@ -23,7 +23,8 @@ def main():
     month = sys.argv[2]
 
     if exists(f"{year}_{month}_taxidata.parquet"):
-        trips = pq.read_table(f'{year}_{month}_taxidata.parquet', coerce_int96_timestamp_unit="us")
+        trips = pq.read_table(f'{year}_{month}_taxidata.parquet', 
+        coerce_int96_timestamp_unit="ns")
         trips = trips.to_pandas()
 
         engine = create_engine(f"mysql+pymysql://{uname}:{pwd}@{hostname}/{dbname}")

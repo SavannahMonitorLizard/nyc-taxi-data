@@ -18,7 +18,7 @@ def main():
         for month in ["01", "02", "03", "04", "05", "07", "08", "09", "10", "11", "12"]:
             if exists(f"{year}_{month}_taxidata.parquet"):
                 trips = pq.read_table(f'{year}_{month}_taxidata.parquet', 
-                                        coerce_int96_timestamp_unit="us")
+                                        coerce_int96_timestamp_unit="ns")
                 trips = trips.to_pandas()
                 
                 engine = create_engine(f"mysql+pymysql://{uname}:{pwd}@{hostname}/{dbname}")
