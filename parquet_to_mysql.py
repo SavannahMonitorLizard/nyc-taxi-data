@@ -4,6 +4,7 @@ from os.path import exists
 from sqlalchemy import create_engine
 import json
 import pyarrow.parquet as pq
+import pyarrow
 
 with open("config.json") as json_file:
     config = json.load(json_file)
@@ -25,8 +26,12 @@ def main():
     if exists(f"{year}_{month}_taxidata.parquet"):
         trips = pq.read_table(f'{year}_{month}_taxidata.parquet', 
         coerce_int96_timestamp_unit="ns")
-        trips = trips.to_pandas()
-
+        try:    
+            trips = trips.to_pandas()
+        except Exception as e:
+            print(e.__doc__)
+            print(f"Error converting {year}_{month} to pandas, exiting")
+            return
         engine = create_engine(f"mysql+pymysql://{uname}:{pwd}@{hostname}/{dbname}")
         trips.to_sql(con=engine, name=f'{year}_{month}', if_exists='replace')
 
