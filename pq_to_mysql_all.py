@@ -1,9 +1,11 @@
+from tracemalloc import start
 import pandas as pd
 from os.path import exists
 from sqlalchemy import create_engine
 import json
 import pyarrow.parquet as pq
 import mysql.connector
+import datetime
 
 with open("config.json") as json_file:
     config = json.load(json_file)
@@ -14,9 +16,11 @@ with open("config.json") as json_file:
     pwd = config["password"]
 
 def main():
+    starttime = datetime.datetime.now()
     for year in ["2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"]:
         for month in ["01", "02", "03", "04", "05", "07", "08", "09", "10", "11", "12"]:
             if exists(f"{year}_{month}_taxidata.parquet"):
+                print(f"Processing file: {year}_{month}")
                 trips = pq.read_table(f'{year}_{month}_taxidata.parquet', 
                                         coerce_int96_timestamp_unit="ns")
                 try:
@@ -27,5 +31,7 @@ def main():
                     return
                 engine = create_engine(f"mysql+pymysql://{uname}:{pwd}@{hostname}/{dbname}")
                 trips.to_sql(con=engine, name=f'{year}_{month}', if_exists='replace')
+
+    print(f"Processing completed successfully in {datetime.datetime.now() - starttime}")
 
 main()
