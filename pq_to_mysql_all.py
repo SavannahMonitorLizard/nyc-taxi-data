@@ -27,6 +27,7 @@ def main():
                     trips = trips.to_pandas()
                 except Exception as e:
                     print(e.__doc__)
+                    print(str(e))
                     print(f"Error converting {year}_{month} to pandas, exiting")
                     return
                 engine = create_engine(f"mysql+pymysql://{uname}:{pwd}@{hostname}/{dbname}")
